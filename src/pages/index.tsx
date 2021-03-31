@@ -24,10 +24,13 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
-    <h1>hello world</h1>
-  )
+    <>
+      <h1>hello world</h1>
+      <img src="/Logo.svg" alt="codebloglogo" />
+    </>
+  );
 }
 
 // export const getStaticProps = async () => {
