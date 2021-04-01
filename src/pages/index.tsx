@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Link from 'next/link';
 import { GetStaticProps } from 'next';
 import { FiCalendar, FiUser } from 'react-icons/fi';
 import Prismic from '@prismicio/client';
@@ -67,21 +68,23 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
     <div className={styles.container}>
       <Header />
       {posts.map(post => (
-        <div className={styles.post} key={post.uid}>
-          <strong>{post.data.title}</strong>
-          <p>{post.data.subtitle}</p>
-          <div>
-            <p>
-              <FiCalendar />
-              {post.first_publication_date}
-            </p>
+        <Link href={`/posts/${post.uid}`}>
+          <div className={styles.post} key={post.uid}>
+            <strong>{post.data.title}</strong>
+            <p>{post.data.subtitle}</p>
+            <div>
+              <p>
+                <FiCalendar />
+                {post.first_publication_date}
+              </p>
 
-            <p>
-              <FiUser />
-              {post.data.author}
-            </p>
+              <p>
+                <FiUser />
+                {post.data.author}
+              </p>
+            </div>
           </div>
-        </div>
+        </Link>
       ))}
       {pagination && (
         <button type="button" onClick={() => handleGetMorePosts()}>
