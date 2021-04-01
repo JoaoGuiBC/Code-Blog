@@ -1,5 +1,8 @@
 import { GetStaticProps } from 'next';
 import { FiCalendar, FiUser } from 'react-icons/fi';
+import Prismic from '@prismicio/client';
+import format from 'date-fns/format';
+import ptBR from 'date-fns/locale/pt-BR';
 
 import { getPrismicClient } from '../services/prismic';
 
@@ -27,63 +30,69 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home(): JSX.Element {
+export default function Home({ postsPagination }: HomeProps): JSX.Element {
   return (
     <div className={styles.container}>
       <Header />
-      <div className={styles.post}>
-        <strong>Como utilizar hooks</strong>
-        <p>pensando em sincronização em vez de ciclos de vida.</p>
-        <div>
-          <p>
-            <FiCalendar />
-            15 mar 2021
-          </p>
+      {postsPagination.results.map(post => (
+        <div className={styles.post}>
+          <strong>{post.data.title}</strong>
+          <p>{post.data.subtitle}</p>
+          <div>
+            <p>
+              <FiCalendar />
+              {post.first_publication_date}
+            </p>
 
-          <p>
-            <FiUser />
-            João Guilherme Da Rocha
-          </p>
+            <p>
+              <FiUser />
+              {post.data.author}
+            </p>
+          </div>
         </div>
-      </div>
-      <div className={styles.post}>
-        <strong>Como utilizar hooks</strong>
-        <p>pensando em sincronização em vez de ciclos de vida.</p>
-        <div>
-          <p>
-            <FiCalendar />
-            15 mar 2021
-          </p>
-
-          <p>
-            <FiUser />
-            João Guilherme Da Rocha
-          </p>
-        </div>
-      </div>
-      <div className={styles.post}>
-        <strong>Como utilizar hooks</strong>
-        <p>pensando em sincronização em vez de ciclos de vida.</p>
-        <div>
-          <p>
-            <FiCalendar />
-            15 mar 2021
-          </p>
-
-          <p>
-            <FiUser />
-            João Guilherme Da Rocha
-          </p>
-        </div>
-      </div>
+      ))}
       <button type="button">Carregar mais posts</button>
     </div>
   );
 }
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient();
-//   // const postsResponse = await prismic.query(TODO);
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient();
 
-//   // TODO
-// };
+  const postsResponse = await prismic.query(
+    [Prismic.Predicates.at('document.type', 'post')],
+    {
+      fetch: ['post.title', 'post.subtitle', 'post.author'],
+      pageSize: 1,
+    }
+  );
+
+  const results = postsResponse.results.map(post => {
+    const formattedDate = format(
+      new Date(post.first_publication_date),
+      'dd MMM yyyy',
+      {
+        locale: ptBR,
+      }
+    );
+
+    return {
+      uid: post.uid,
+      first_publication_date: formattedDate,
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      },
+    };
+  });
+
+  return {
+    props: {
+      postsPagination: {
+        next_page: postsResponse.next_page,
+        results,
+      },
+    },
+  };
+};
