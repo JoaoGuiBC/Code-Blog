@@ -34,7 +34,7 @@ export default function Home(): JSX.Element {
       <div className={styles.post}>
         <strong>Como utilizar hooks</strong>
         <p>pensando em sincronização em vez de ciclos de vida.</p>
-        <div className={styles.info}>
+        <div>
           <p>
             <FiCalendar />
             15 mar 2021
@@ -49,7 +49,22 @@ export default function Home(): JSX.Element {
       <div className={styles.post}>
         <strong>Como utilizar hooks</strong>
         <p>pensando em sincronização em vez de ciclos de vida.</p>
-        <div className={styles.info}>
+        <div>
+          <p>
+            <FiCalendar />
+            15 mar 2021
+          </p>
+
+          <p>
+            <FiUser />
+            João Guilherme Da Rocha
+          </p>
+        </div>
+      </div>
+      <div className={styles.post}>
+        <strong>Como utilizar hooks</strong>
+        <p>pensando em sincronização em vez de ciclos de vida.</p>
+        <div>
           <p>
             <FiCalendar />
             15 mar 2021
