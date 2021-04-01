@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { GetStaticProps } from 'next';
 import { FiCalendar, FiUser } from 'react-icons/fi';
 import Prismic from '@prismicio/client';
@@ -31,11 +32,42 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
+  const [posts, setPosts] = useState<Post[]>(postsPagination.results);
+  const [pagination, setPagination] = useState(postsPagination.next_page);
+
+  async function handleGetMorePosts(): Promise<void> {
+    const postsResponse = await fetch(pagination);
+    const parsedPosts = await postsResponse.json();
+
+    const results = parsedPosts.results.map(post => {
+      const formattedDate = format(
+        new Date(post.first_publication_date),
+        'dd MMM yyyy',
+        {
+          locale: ptBR,
+        }
+      );
+
+      return {
+        uid: post.uid,
+        first_publication_date: formattedDate,
+        data: {
+          title: post.data.title,
+          subtitle: post.data.subtitle,
+          author: post.data.author,
+        },
+      };
+    });
+
+    setPosts([...posts, ...results]);
+    setPagination(parsedPosts.next_page);
+  }
+
   return (
     <div className={styles.container}>
       <Header />
-      {postsPagination.results.map(post => (
-        <div className={styles.post}>
+      {posts.map(post => (
+        <div className={styles.post} key={post.uid}>
           <strong>{post.data.title}</strong>
           <p>{post.data.subtitle}</p>
           <div>
@@ -51,7 +83,11 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
           </div>
         </div>
       ))}
-      <button type="button">Carregar mais posts</button>
+      {pagination && (
+        <button type="button" onClick={() => handleGetMorePosts()}>
+          Carregar mais posts
+        </button>
+      )}
     </div>
   );
 }
