@@ -1,6 +1,9 @@
 import { GetStaticProps } from 'next';
+import { FiCalendar, FiUser } from 'react-icons/fi';
 
 import { getPrismicClient } from '../services/prismic';
+
+import Header from '../components/Header';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
@@ -26,10 +29,40 @@ interface HomeProps {
 
 export default function Home(): JSX.Element {
   return (
-    <>
-      <h1>hello world</h1>
-      <img src="/Logo.svg" alt="codebloglogo" />
-    </>
+    <div className={styles.container}>
+      <Header />
+      <div className={styles.post}>
+        <strong>Como utilizar hooks</strong>
+        <p>pensando em sincronização em vez de ciclos de vida.</p>
+        <div className={styles.info}>
+          <p>
+            <FiCalendar />
+            15 mar 2021
+          </p>
+
+          <p>
+            <FiUser />
+            João Guilherme Da Rocha
+          </p>
+        </div>
+      </div>
+      <div className={styles.post}>
+        <strong>Como utilizar hooks</strong>
+        <p>pensando em sincronização em vez de ciclos de vida.</p>
+        <div className={styles.info}>
+          <p>
+            <FiCalendar />
+            15 mar 2021
+          </p>
+
+          <p>
+            <FiUser />
+            João Guilherme Da Rocha
+          </p>
+        </div>
+      </div>
+      <button type="button">Carregar mais posts</button>
+    </div>
   );
 }
 
